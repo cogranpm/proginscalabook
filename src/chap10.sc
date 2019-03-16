@@ -57,6 +57,13 @@ class Cat {
 //parametric fields with override and private specifier
 class Tiger( override val dangerous: Boolean, private var age: Int) extends Cat
 
+//invoke superclass constructor
+//note the parameter in the extends section
+class LineElement(s: String) extends ArrayElement(Array(s)) {
+  override def width = s.length
+  override def height = 1
+}
+
 
 
 
