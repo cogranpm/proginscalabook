@@ -60,9 +60,10 @@ class Tiger( override val dangerous: Boolean, private var age: Int) extends Cat
 //invoke superclass constructor
 //note the parameter in the extends section
 class LineElement(s: String) extends ArrayElement(Array(s)) {
-  override def width = s.length
+  override def width = s.length //note: override is required for all concrete members of a parent class, optional if abstract
   override def height = 1
 }
+//override keyword requirement helps with accidental overrides problem when methods added to base classes
 
 
 
