@@ -19,11 +19,23 @@ abstract class Element {
   //fields require more memory whereas methods are slower to call
   //use parenthesis if method performs io, writes vars, or reads vars other than receivers fields, ie has side effects
 
+  //dynamic binding
+  def demo() = {
+    println("I am in Element now")
+  }
+
+  //use final to create a def that cannot be overridden
+  final def cantChangeMe() = {
+    "can't change me"
+  }
 }
 
 //extending classes, AnyRef is automatically extended for classes with an extends clause
 class ArrayElement(conts: Array[String]) extends Element {
   def contents: Array[String] = conts
+  override def demo() = {
+    println("hi, ArrayElement here, I extend Element directly")
+  }
 }
 
 
@@ -41,6 +53,9 @@ class ArrayElementField(conts: Array[String]) extends Element {
 
   val contents: Array[String] = conts
 
+  override def demo() = {
+    println("I am ArrayElementField")
+  }
 }
 
 //parametric fields
@@ -59,9 +74,15 @@ class Tiger( override val dangerous: Boolean, private var age: Int) extends Cat
 
 //invoke superclass constructor
 //note the parameter in the extends section
-class LineElement(s: String) extends ArrayElement(Array(s)) {
+//also can make whole class final, cannot be subclassed
+final class LineElementOld(s: String) extends ArrayElement(Array(s)) {
   override def width = s.length //note: override is required for all concrete members of a parent class, optional if abstract
   override def height = 1
+
+  //can make override in subclass final so nothing further down can override
+  final override def demo() = {
+    println("magic, I am Line Element, subclass of ArrayElement")
+  }
 }
 //override keyword requirement helps with accidental overrides problem when methods added to base classes
 
@@ -70,6 +91,38 @@ class UniformElement ( ch: Char, override val width: Int, override val height: I
   private val line = ch.toString * width //note scala style, method looks like operator eg * is a method in StringOps
   def contents = Array.fill(height)(line) //this looks like a curried call, not sure if its required
 }
+
+
+//why to prefer composition over inheritence
+//inheritence has the fragile base class issue where you can break subclass
+//by changing the superclass
+//eg LineElement should really be sublass of Element, not ArrayElement
+class LineElement(s: String) extends Element {
+  val contents = Array(s)
+  override def width = s.length
+  override def height: Int = 1
+
+}
+
+//can declare subclasses in variety of ways
+val e1: Element = new ArrayElement(Array("hello", "world"))
+val ae: ArrayElement = new LineElementOld("hello")
+val e2: Element = ae
+val e3: Element = new UniformElement('x', 2, 3)
+
+//dynamic binding; method implementation invoked is determined at runtime
+//based on the class of the object
+def invokeDemo(e: Element) = {
+  e.demo()
+}
+
+invokeDemo(new ArrayElement(Array("hello", "world")))
+invokeDemo(new LineElement("helloworld"))
+invokeDemo(new UniformElement('x', 2, 2))
+
+
+
+
 
 
 
