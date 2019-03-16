@@ -65,7 +65,11 @@ class LineElement(s: String) extends ArrayElement(Array(s)) {
 }
 //override keyword requirement helps with accidental overrides problem when methods added to base classes
 
-
+//extending an abstract class, have not reached traits yet
+class UniformElement ( ch: Char, override val width: Int, override val height: Int) extends Element {
+  private val line = ch.toString * width //note scala style, method looks like operator eg * is a method in StringOps
+  def contents = Array.fill(height)(line) //this looks like a curried call, not sure if its required
+}
 
 
 
