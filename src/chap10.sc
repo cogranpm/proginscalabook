@@ -19,6 +19,25 @@ abstract class Element {
   //fields require more memory whereas methods are slower to call
   //use parenthesis if method performs io, writes vars, or reads vars other than receivers fields, ie has side effects
 
+
+  //++ operation concatenates two arrays, scala arrays support many more methods than java
+  //they are java arrays underneath, scala arrays can be converted into instances
+  //of scala.Seq
+  def above(that: Element): Element =
+    new ArrayElement(this.contents ++ that.contents)
+
+  //this is an imperative style, note the for loop
+  def besideImperativeStyle(that: Element): Element = {
+    val contents = new Array[String](this.contents.length)
+    //note use of "until" in loop
+    for(i <- 0 until this.contents.length)
+      contents(i) = this.contents(i) + that.contents(i)
+    new ArrayElement(contents)
+  }
+
+
+
+
   //dynamic binding
   def demo() = {
     println("I am in Element now")
@@ -119,8 +138,6 @@ def invokeDemo(e: Element) = {
 invokeDemo(new ArrayElement(Array("hello", "world")))
 invokeDemo(new LineElement("helloworld"))
 invokeDemo(new UniformElement('x', 2, 2))
-
-
 
 
 
