@@ -78,6 +78,8 @@ x == y
 x eq y
 x ne y
 
+//defining your own value classes
+
 
 
 
