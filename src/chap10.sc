@@ -1,6 +1,7 @@
 //abstract classes
-
 object chap10 {
+
+  import Element.elem
 
   abstract class Element {
     //abstract method, no body
@@ -27,16 +28,17 @@ object chap10 {
     override def toString: String = contents mkString "\n"
 
 
-
     //this is the above and beside stuff
     //it was in Element class in book, I don't see how that could work as
     //ArrayElement is referenced all over the place, how can the base class Element
     //access ArrayElement which is its subclass
+    //the answer is to put it inside a singleton object
+
     //++ operation concatenates two arrays, scala arrays support many more methods than java
     //they are java arrays underneath, scala arrays can be converted into instances
     //of scala.Seq
     def above(that: Element): Element =
-      new ArrayElement(this.contents ++ that.contents)
+      elem(this.contents ++ that.contents) //using factory method style
 
     //this is an imperative style, note the for loop
     def besideImperativeStyle(that: Element): Element = {
@@ -45,7 +47,8 @@ object chap10 {
       //note use of "until" in loop, for 0 based sequences
       for (i <- 0 until this.contents.length)
         contents(i) = this.contents(i) + that.contents(i)
-      new ArrayElement(contents)
+      //note using factory method style
+      elem(contents)
     }
 
     //a more functional version
@@ -53,7 +56,7 @@ object chap10 {
     //and forms an array of pairs, eg Array((1, "a"), (2, "b"))
     //for loop with a pattern match to deconstruct array item to a tuple
     def beside(that: Element): Element = {
-      new ArrayElement(
+      elem(
         for (
           (line1, line2) <- this.contents zip that.contents
         ) yield line1 + line2
@@ -70,18 +73,6 @@ object chap10 {
       "can't change me"
     }
   }
-
-  //extending classes, AnyRef is automatically extended for classes with an extends clause
-  class ArrayElement(conts: Array[String]) extends Element {
-    def contents: Array[String] = conts
-
-    override def demo() = {
-      println("hi, ArrayElement here, I extend Element directly")
-    }
-
-
-  }
-
 
 
   //you can override a parameterless method with a field\
@@ -123,27 +114,7 @@ object chap10 {
     }
   }
 
-  //override keyword requirement helps with accidental overrides problem when methods added to base classes
 
-  //extending an abstract class, have not reached traits yet
-  class UniformElement(ch: Char, override val width: Int, override val height: Int) extends Element {
-    private val line = ch.toString * width //note scala style, method looks like operator eg * is a method in StringOps
-    def contents = Array.fill(height)(line) //this looks like a curried call, not sure if its required
-  }
-
-
-  //why to prefer composition over inheritence
-  //inheritence has the fragile base class issue where you can break subclass
-  //by changing the superclass
-  //eg LineElement should really be sublass of Element, not ArrayElement
-  class LineElement(s: String) extends Element {
-    val contents = Array(s)
-
-    override def width = s.length
-
-    override def height: Int = 1
-
-  }
 
 
   val ee = new ArrayElement(Array("hello", "world"))
@@ -165,17 +136,71 @@ object chap10 {
     e.demo()
   }
 
-  invokeDemo(new ArrayElement(Array("hello", "world")))
-  invokeDemo(new LineElement("helloworld"))
-  invokeDemo(new UniformElement('x', 2, 2))
+
+  //defining a factory object
+  //how do you decide what to hide from clients and what to expose
+
+
+  object Element {
+    def elem(contents: Array[String]): Element =
+      new ArrayElement(contents)
+
+    def elem(chr: Char, width: Int, height: Int): Element =
+      new UniformElement(chr, width, height)
+
+    def elem(line: String): Element =
+      new LineElement(line)
+
+
+    //note: you can place classes and singleton objects
+    //inside other classes and singleton objects
+    //you can make classes private by putting inside a singleton object and
+    //making it private
+
+    //why to prefer composition over inheritence
+    //inheritence has the fragile base class issue where you can break subclass
+    //by changing the superclass
+    //eg LineElement should really be sublass of Element, not ArrayElement
+    private class LineElement(s: String) extends Element {
+      val contents = Array(s)
+
+      override def width = s.length
+
+      override def height: Int = 1
+
+    }
+
+    //override keyword requirement helps with accidental overrides problem when methods added to base classes
+
+    //extending an abstract class, have not reached traits yet
+    private class UniformElement(ch: Char, override val width: Int, override val height: Int) extends Element {
+      private val line = ch.toString * width //note scala style, method looks like operator eg * is a method in StringOps
+      def contents = Array.fill(height)(line) //this looks like a curried call, not sure if its required
+    }
+
+
+    //extending classes, AnyRef is automatically extended for classes with an extends clause
+    private class ArrayElement(conts: Array[String]) extends Element {
+      def contents: Array[String] = conts
+
+      override def demo() = {
+        println("hi, ArrayElement here, I extend Element directly")
+      }
+
+
+    }
+
+
+
+    invokeDemo(new ArrayElement(Array("hello", "world")))
+    invokeDemo(new LineElement("helloworld"))
+    invokeDemo(new UniformElement('x', 2, 2))
+
+
+  }
+
 
 }
-
-
-
-
-
-
 
 
 
