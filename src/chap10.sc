@@ -20,22 +20,11 @@ abstract class Element {
   //use parenthesis if method performs io, writes vars, or reads vars other than receivers fields, ie has side effects
 
 
-  //++ operation concatenates two arrays, scala arrays support many more methods than java
-  //they are java arrays underneath, scala arrays can be converted into instances
-  //of scala.Seq
-  def above(that: Element): Element =
-    new ArrayElement(this.contents ++ that.contents)
-
-  //this is an imperative style, note the for loop
-  def besideImperativeStyle(that: Element): Element = {
-    val contents = new Array[String](this.contents.length)
-    //note use of "until" in loop
-    for(i <- 0 until this.contents.length)
-      contents(i) = this.contents(i) + that.contents(i)
-    new ArrayElement(contents)
-  }
 
 
+  //default toString implementation
+  //note class inherits from AnyRef
+  override def toString: String = contents mkString "\n"
 
 
   //dynamic binding
@@ -54,6 +43,38 @@ class ArrayElement(conts: Array[String]) extends Element {
   def contents: Array[String] = conts
   override def demo() = {
     println("hi, ArrayElement here, I extend Element directly")
+  }
+
+  //this is the above and beside stuff
+  //it was in Element class in book, I don't see how that could work as
+  //ArrayElement is referenced all over the place, how can the base class Element
+  //access ArrayElement which is its subclass
+  //++ operation concatenates two arrays, scala arrays support many more methods than java
+  //they are java arrays underneath, scala arrays can be converted into instances
+  //of scala.Seq
+  def above(that: Element): Element =
+    new ArrayElement(this.contents ++ that.contents)
+
+  //this is an imperative style, note the for loop
+  def besideImperativeStyle(that: Element): Element = {
+    //allocate an array
+    val contents = new Array[String](this.contents.length)
+    //note use of "until" in loop, for 0 based sequences
+    for(i <- 0 until this.contents.length)
+      contents(i) = this.contents(i) + that.contents(i)
+    new ArrayElement(contents)
+  }
+
+  //a more functional version
+  //zip operator picks corresponding elements in each sequence passed
+  //and forms an array of pairs, eg Array((1, "a"), (2, "b"))
+  //for loop with a pattern match to deconstruct array item to a tuple
+  def beside(that: Element): Element = {
+    new ArrayElement(
+      for (
+        (line1, line2) <- this.contents zip that.contents
+      ) yield line1 + line2
+    )
   }
 }
 
