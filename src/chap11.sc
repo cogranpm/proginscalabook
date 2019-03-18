@@ -79,7 +79,21 @@ x eq y
 x ne y
 
 //defining your own value classes
+//can have only 1 parameter
+//only defs inside
+class Dollars (val amount: Int) extends AnyVal {
+  override def toString: String = "$" + amount
+}
 
+class SwissFrancs(val amount: Int) extends AnyVal {
+  override def toString: String = amount + "CHF"
+}
+
+val money = new Dollars(25)
+money.amount
+
+val francs = new SwissFrancs(100000)
+francs.toString
 
 
 
