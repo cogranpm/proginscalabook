@@ -37,8 +37,14 @@ object chap10 {
     //++ operation concatenates two arrays, scala arrays support many more methods than java
     //they are java arrays underneath, scala arrays can be converted into instances
     //of scala.Seq
-    def above(that: Element): Element =
-      elem(this.contents ++ that.contents) //using factory method style
+    def above(that: Element): Element = {
+      //below call to widen, it's actually this.widen(that.width)
+      //so remember it's a method call on the left operand
+      val this1 = this widen that.width //note the operator style method call
+      val that1 = that widen this.width
+      elem(this1.contents ++ that1.contents) //using factory method style
+    }
+
 
     //this is an imperative style, note the for loop
     def besideImperativeStyle(that: Element): Element = {
@@ -56,12 +62,31 @@ object chap10 {
     //and forms an array of pairs, eg Array((1, "a"), (2, "b"))
     //for loop with a pattern match to deconstruct array item to a tuple
     def beside(that: Element): Element = {
+      //note, this is this.heighten(that.height)
+      val this1 = this heighten  that.height
+      val that1 = that heighten  this.height
       elem(
         for (
-          (line1, line2) <- this.contents zip that.contents
+          (line1, line2) <- this1.contents zip that1.contents
         ) yield line1 + line2
       )
     }
+
+    def widen(w: Int): Element =
+      if (w <= width) this
+      else {
+        val left = elem(' ', (w - width) / 2, height)
+        val right = elem(' ', w - width - left.width, height)
+        left beside this beside right
+      }
+
+    def heighten(h: Int): Element =
+      if (h <= height) this
+      else {
+        val top = elem(' ', width, (h - height) / 2)
+        val bot = elem(' ', width, h - height - top.height)
+        top above this above bot
+      }
 
     //dynamic binding
     def demo() = {
@@ -75,23 +100,6 @@ object chap10 {
   }
 
 
-  //you can override a parameterless method with a field\
-  //but you can't define a method and field with the same name in the same class
-  //like you can in java
-  class ArrayElementField(conts: Array[String]) extends Element {
-
-    val contents: Array[String] = conts
-
-    override def demo() = {
-      println("I am ArrayElementField")
-    }
-  }
-
-  //parametric fields
-  //combine field and parameter in a single definition
-  class ArrayElementParametricField(val contents: Array[String]) extends Element {
-    //empty body
-  }
 
   //you can use var, val, private, protected, override in parametric fields too
   class Cat {
@@ -101,40 +109,9 @@ object chap10 {
   //parametric fields with override and private specifier
   class Tiger(override val dangerous: Boolean, private var age: Int) extends Cat
 
-  //invoke superclass constructor
-  //note the parameter in the extends section
-  //also can make whole class final, cannot be subclassed
-  final class LineElementOld(s: String) extends ArrayElement(Array(s)) {
-    override def width = s.length //note: override is required for all concrete members of a parent class, optional if abstract
-    override def height = 1
-
-    //can make override in subclass final so nothing further down can override
-    final override def demo() = {
-      println("magic, I am Line Element, subclass of ArrayElement")
-    }
-  }
 
 
 
-
-  val ee = new ArrayElement(Array("hello", "world"))
-  //inherits method/fields from the super class Element
-  ee.width
-  //as you'd expect, can pass around ArrayElement in super class var type
-  val supa: Element = new ArrayElement(Array("I'm not me"))
-
-
-  //can declare subclasses in variety of ways
-  val e1: Element = new ArrayElement(Array("hello", "world"))
-  val ae: ArrayElement = new LineElementOld("hello")
-  val e2: Element = ae
-  val e3: Element = new UniformElement('x', 2, 3)
-
-  //dynamic binding; method implementation invoked is determined at runtime
-  //based on the class of the object
-  def invokeDemo(e: Element) = {
-    e.demo()
-  }
 
 
   //defining a factory object
@@ -190,12 +167,61 @@ object chap10 {
 
     }
 
+    //invoke superclass constructor
+    //note the parameter in the extends section
+    //also can make whole class final, cannot be subclassed
+    private final class LineElementOld(s: String) extends ArrayElement(Array(s)) {
+      override def width = s.length //note: override is required for all concrete members of a parent class, optional if abstract
+      override def height = 1
+
+      //can make override in subclass final so nothing further down can override
+      final override def demo() = {
+        println("magic, I am Line Element, subclass of ArrayElement")
+      }
+    }
+
+      //you can override a parameterless method with a field\
+      //but you can't define a method and field with the same name in the same class
+      //like you can in java
+      private final class ArrayElementField(conts: Array[String]) extends Element {
+
+        val contents: Array[String] = conts
+
+        override def demo() = {
+          println("I am ArrayElementField")
+        }
+      }
+
+      //parametric fields
+      //combine field and parameter in a single definition
+      private final class ArrayElementParametricField(val contents: Array[String]) extends Element {
+        //empty body
+      }
+
+      val ee = elem(Array("hello", "world"))
+      //inherits method/fields from the super class Element
+      ee.width
+      //as you'd expect, can pass around ArrayElement in super class var type
+      val supa: Element = new ArrayElement(Array("I'm not me"))
+
+
+      //can declare subclasses in variety of ways - uh oh, had to change this after making the subclasses private
+    //see below they are all declared as Element now
+      val e1: Element = new ArrayElement(Array("hello", "world"))
+      val ae: Element = new LineElementOld("hello")
+      val e2: Element = ae
+      val e3: Element = new UniformElement('x', 2, 3)
+
+      //dynamic binding; method implementation invoked is determined at runtime
+      //based on the class of the object
+      def invokeDemo(e: Element) = {
+        e.demo()
+      }
 
 
     invokeDemo(new ArrayElement(Array("hello", "world")))
     invokeDemo(new LineElement("helloworld"))
     invokeDemo(new UniformElement('x', 2, 2))
-
 
   }
 
@@ -203,6 +229,39 @@ object chap10 {
 }
 
 
+import chap10.Element.elem
+import chap10.Element
+
+object Spiral {
+  val space = elem(" ")
+  val corner = elem("+")
+  def spiral(nEdges: Int, direction: Int): Element = {
+    if(nEdges == 1)
+      elem("+")
+    else {
+      //recursive call, not tail call optimized
+      val sp = spiral(nEdges - 1, (direction + 3) % 4)
+
+      def verticalBar = elem('|', 1, sp.height)
+
+      def horizontalBar = elem('-', sp.width, 1)
+
+      if (direction == 0)
+        (corner beside horizontalBar) above (sp beside space)
+      else if (direction == 1)
+        (sp above space) beside (corner above verticalBar)
+      else if (direction == 2)
+        (space beside sp) above (horizontalBar beside corner)
+      else
+        (verticalBar above corner) beside (space above sp)
+    }
+  }
+
+  def main(args: Array[String]) = {
+    val nSides = args(0).toInt
+    println(spiral(nSides, 0))
+  }
+}
 
 
 
