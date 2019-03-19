@@ -99,6 +99,8 @@ francs.toString
 //for example if you are providing parameters for a class, say of type string
 //should that parameter be a class itself, instead of a string with some inbuilt meaning
 //don't be afraid of creating a bunch of tiny classes
+//for example, if a parameter is just a string, create a value class that takes a single string
+//parameter called value
 
 
 
