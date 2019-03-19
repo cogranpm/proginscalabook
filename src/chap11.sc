@@ -92,7 +92,7 @@ class SwissFrancs(val amount: Int) extends AnyVal {
 val money = new Dollars(25)
 money.amount
 
-val francs = new SwissFrancs(100000)
+val franc = new SwissFrancs(100000)
 francs.toString
 
 
