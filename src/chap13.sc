@@ -19,6 +19,7 @@ package com.we.did.it {
 
 }
 
+//benefits, different file many packages
 package bobsrickets {
   package navigation {
 
@@ -44,21 +45,31 @@ package bobsrickets {
   }
 }
 
+
+//again, single file, multiple packages, package still hides members for other packages in same file
 package bobsrockets {
   class Ship
 }
 
 package bobsrockets.fleets {
 
-
-
   class Fleet{
     def AddShip() = {new who.done.it.bobsrockets.Ship}
   }
 }
 
+//accessing hidden package names
+
 package launch {
   class Booster3
 }
+
+//hidden _root_ package
+//every package has _root_ has it's parent package, which allows navigating hierarchies
+
+//imports can occur anywhere, even inside methods
+//useful when you use objects as modules
+
+//see file bobsdelights
 
 

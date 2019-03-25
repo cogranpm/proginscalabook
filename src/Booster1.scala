@@ -10,7 +10,10 @@ package bobsrockets {
 
   class MissionControl {
     val booster1 = new launch.Booster1
+    val booster2 = new bobsrockets.launch.Booster2
 
   }
+
+
 
 }
