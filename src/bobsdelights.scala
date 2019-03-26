@@ -13,3 +13,17 @@ object Fruits {
   object Pear extends Fruit("pear", "yellowish")
   val menu = List(Apple, Orange, Pear)
 }
+
+//single type import
+import bobsdelights.Fruit
+
+//on demand import
+import bobsdelights._
+
+//importing an object and all members
+import bobsdelights.Fruits._
+
+def showFruit(fruit: Fruit) = {
+  import fruit._
+  println((name + "s are " + color))
+}
