@@ -29,4 +29,26 @@ val numsRaw = 1 :: 2 :: 3 :: 4 :: Nil
 
 //basic operations
 //head, tail (exclude first), isEmpty
+//head and tail will throw for empty list
 
+//example of list processing, insertion sort
+
+def insert(x: Int, xs: List[Int]): List[Int] =
+  if(xs.isEmpty || x <= xs.head) x :: xs
+  else xs.head :: insert(x, xs.tail)
+
+def isort(xs: List[Int]) : List[Int] =
+  if (xs.isEmpty) Nil
+  else insert(xs.head, isort(xs.tail))
+
+val existingList = List(1, 2, 3, 5, 6)
+insert(4, existingList)
+val unsortedList = List(2, 5, 4, 6, 3)
+insert(1, isort(unsortedList))
+
+//list patterns
+val List(a, b, c) = fruit
+//matches lists of length 3, if you don't know the number of elements match with ::
+val e :: f :: rest = fruit
+
+//pattern matching example of sorting
