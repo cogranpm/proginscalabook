@@ -50,15 +50,102 @@ insert(1, isort(unsortedList))
 val List(a, b, c) = fruit
 //matches lists of length 3, if you don't know the number of elements match with ::
 val e :: f :: rest = fruit
+println("Matching results on e :: f :: rest ")
+println(s"e: $e")
+println(s"f: $f")
+println(s"the rest should be a list: $rest")
 
 //pattern matching example of sorting
-def isortpt(xs: List[Int]): List[Int] = xs match {
-  case List() => List()
-  case x :: xs1 => insert(x, isortpt(xs1))
-}
-
 def insertpt(x: Int, xs: List[Int]): List[Int] = xs match {
   case List() => List(x)
-  case y :: ys => if( x <= y) x :: xs
-  else y :: insert(x, ys)
+  case y :: ys => if( x <= y) x :: xs  else y :: insertpt(x, ys)
 }
+
+def isortpt(xs: List[Int]): List[Int] = xs match {
+  case List() => List()
+  case x :: xs1 => insertpt(x, isortpt(xs1))
+}
+
+
+
+//this call inserts 1 in the correct position in the list
+println("sorting a list based on pattern matching and recursion")
+println("previous sort relied on head and tail")
+println("reminder: head gets the first item, tail excludes the first item and gets the rest")
+println("here are results of sorting a list pattern match style")
+insertpt(1, isortpt(unsortedList))
+println("matches are: List() and y :: ys ")
+println("List() I think matches the empty list")
+println("x :: xs1 breaks down first and remaining items, then recursive call sends in remaining items")
+
+
+
+println("forms of pattern matching on lists are List(...) and :: ")
+println("which are the extractor pattern and cons pattern x :: xs is treated as ::(x, xs)")
+println("a :: b will take apart a list into the first and second items")
+println("important thing to remember, :: (cons) means append in normal code, in pattern means break down list")
+
+println("First order methods on class list, means does not take any functions as arguments")
+println("::: means concatenate two lists, its infix, method in class list")
+List(1, 2) ::: List(3, 4)
+println("Associates to the right, ie xs ::: (ys ::: zs), concat xs with the sum of ys, zs")
+
+//concat list done the manual way using patten match, is just an exercise
+//use the divide and conquer principle over recursive data structures
+//such as lists, we will take apart xs and prepend to ys
+def append1[T](xs: List[T], ys: List[T]) : List[T] = ???
+
+//sketch out the pattern match
+def append2[T](xs: List[T], ys: List[T]) : List[T] =
+  xs match {
+    case List() => ??? //this means empty list
+    case x :: xs1 => ???
+  }
+
+def append3[T](xs: List[T], ys: List[T]) : List[T] =
+  xs match {
+    case List() => ys //this means empty list, if xs empty just return ys
+    case x :: xs1 => ???
+  }
+
+
+def append4[T](xs: List[T], ys: List[T]) : List[T] =
+  xs match {
+    case List() => ys //this means empty list, if xs empty just return ys
+    case x :: xs1 => x :: append4(xs1, ys) //the head is repeatedly concatenated to ys, xs is the tail, ie the remaining list
+  }
+
+//lets try it now
+append4(List(1,2,3), List(4, 5, 6))
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
