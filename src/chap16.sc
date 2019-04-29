@@ -52,3 +52,13 @@ val List(a, b, c) = fruit
 val e :: f :: rest = fruit
 
 //pattern matching example of sorting
+def isortpt(xs: List[Int]): List[Int] = xs match {
+  case List() => List()
+  case x :: xs1 => insert(x, isortpt(xs1))
+}
+
+def insertpt(x: Int, xs: List[Int]): List[Int] = xs match {
+  case List() => List(x)
+  case y :: ys => if( x <= y) x :: xs
+  else y :: insert(x, ys)
+}
