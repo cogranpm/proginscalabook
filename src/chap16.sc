@@ -118,6 +118,65 @@ def append4[T](xs: List[T], ys: List[T]) : List[T] =
 //lets try it now
 append4(List(1,2,3), List(4, 5, 6))
 
+//length is slow on lists, fast on arrays
+List(1,2).length
+List().isEmpty
+//init and last (these are slow, access from the head if possible)
+//init gets all elements except the last one and last is obvious
+List(1, 2).init //returns a list
+List(1, 2).last //returns a list element
+
+//reverse the list if you need to work from the back, its faster
+List('a', 'b', 'c', 'd', 'e').reverse
+//remember, lists are immutable
+//here's how you could reverse a list via pattern matching
+def rev[T](xs: List[T]) : List[T] =
+  xs match {
+    case List() => xs
+    case x :: xs1 => rev(xs1) ::: List(x) //keep adding head to the tail, until the passed in becomes empty
+  }
+
+//prefixes and suffixes
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
