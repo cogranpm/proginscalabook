@@ -159,6 +159,10 @@ List('a', 'b', 'c').zipWithIndex
 List('a', 'b', 'c').zipWithIndex.unzip
 //display, toString and mkString
 List("hawks", "demons", "bombers").mkString("Teams: ", " -- ", ". Go Hawks")
+val buf = new StringBuilder
+List("hawks", "demons", "bombers") addString (buf, "Teams:", " -- ", " Go Hawkas")
+
+//converting
 
 
 
