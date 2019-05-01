@@ -137,11 +137,28 @@ def rev[T](xs: List[T]) : List[T] =
   }
 
 //prefixes and suffixes
+//return the first n elements of list
+//returns all elements except first n ones
+List('a', 'b', 'c', 'd', 'e') take 2
+List('a', 'b', 'c', 'd', 'e') drop 4
 
+//splitAt returns two lists
+List('a', 'b', 'c', 'd', 'e').splitAt(3)
 
+//don't do this, its slow on lists
+List(1, 2, 3)(2)
+//or
+List(1, 2, 3).apply(2)
 
-
-
+//flatten, takes a list of lists
+//zip,takes two lists and forms a list of pairs- tuples
+List('a', 'b', 'c') zip List('1', '2', '3')
+//zipWithIndex, forms pairs given a list
+List('a', 'b', 'c').zipWithIndex
+//unzip to change tuple of lists back to list
+List('a', 'b', 'c').zipWithIndex.unzip
+//display, toString and mkString
+List("hawks", "demons", "bombers").mkString("Teams: ", " -- ", ". Go Hawks")
 
 
 
